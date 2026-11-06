@@ -60,7 +60,12 @@ const getMonthEnd = timestamp => {
 
 const getDayEnd = timestamp => {
   const utcTime = getUtcTime(timestamp)
-  return [+utcTime, +utcTime + 60 * 1000 * 60 * 24 - 1000]
+  if (!timestamp) return [+utcTime, +utcTime + 60 * 1000 * 60 * 24 - 1000]
+  const inputTime = new Date(timestamp)
+  const nextDay = new Date(+utcTime)
+  nextDay.setDate(nextDay.getDate() + 1)
+  nextDay.setHours(inputTime.getUTCHours(), inputTime.getUTCMinutes(), inputTime.getUTCSeconds(), 0)
+  return [+utcTime, +nextDay - 1000]
 }
 
 const getHourEnd = timestamp => {
