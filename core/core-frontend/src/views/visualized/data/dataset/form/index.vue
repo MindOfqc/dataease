@@ -52,6 +52,7 @@ import type { FormInstance } from 'element-plus-secondary'
 import type { BusiTreeNode } from '@/models/tree/TreeNode'
 import CreatDsGroup from './CreatDsGroup.vue'
 import { guid, getFieldName, timeTypes, num, type DataSource } from './util'
+import { findNodeFields } from './findNodeFields'
 import { fieldType } from '@/utils/attr'
 import { cancelMap } from '@/config/axios/service'
 import { useEmbedded } from '@/store/modules/embedded'
@@ -924,17 +925,6 @@ const delGroupIds = () => {
   allfields.value = allfields.value.filter(ele => !delIds.includes(ele.id))
 }
 
-const dfsNode = (arr, id) => {
-  return arr.reduce((pre, next) => {
-    if (next.id === id) {
-      pre = [...next.currentDsFields]
-    } else if (next.children?.length) {
-      pre = dfsNode(next.children, id)
-    }
-    return pre
-  }, [])
-}
-
 const dfsFieldsTips = (arr, list, idArr) => {
   list.forEach(ele => {
     if (ele.children?.length) {
@@ -960,8 +950,8 @@ const confirmEditUnion = () => {
     return
   }
 
-  const nodeOldCurrentDsFields = dfsNode(datasetDrag.value.getNodeList(), to)
-  const parentOldCurrentDsFields = dfsNode(datasetDrag.value.getNodeList(), from)
+  const nodeOldCurrentDsFields = findNodeFields(datasetDrag.value.getNodeList(), to)
+  const parentOldCurrentDsFields = findNodeFields(datasetDrag.value.getNodeList(), from)
 
   setGuid(node.currentDsFields, node.id, node.datasourceId, nodeOldCurrentDsFields)
   setGuid(parent.currentDsFields, parent.id, parent.datasourceId, parentOldCurrentDsFields)
